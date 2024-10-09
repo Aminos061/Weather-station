@@ -1,0 +1,21 @@
+version: "3.9"
+services:
+  frontend_flutter:
+    build: ./frontend_flutter
+    container_name: frontend_flutter
+    depends_on:
+      - backend_python
+    links:
+      - backend_python
+    expose:
+      - 8080
+    ports:
+      - "8080:80"
+
+  backend_python:
+    build: ./backend
+    container_name: backend_python
+    expose:
+      - 5000
+    ports:
+      - "5000:5000"
