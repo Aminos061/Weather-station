@@ -10,12 +10,11 @@ INFLUXDB_USERNAME = "hsma_faki_stud2024"
 INFLUXDB_PASSWORD = "N8Yqotmhe1lHZZTY2l8py4Hl6BUqEl" 
 INFLUXDB_DB = "HSMA_weather_stations" 
 
-# API endpoint to retrieve weather data by ID
-@app.route('/api/data/<string:data_id>', methods=['GET'])
-def get_weather_data(data_id):
+# API endpoint to retrieve weather data
+@app.route('/api/data', methods=['GET'])
+def get_weather_data():
     # Prepare the query
-    # Assuming the measurement is 'weather' and 'id' is a tag
-    query = f"SELECT * FROM weather WHERE id = '{data_id}'"
+    query = "SHOW SERIES"
     params = {
         "db": INFLUXDB_DB,
         "q": query
