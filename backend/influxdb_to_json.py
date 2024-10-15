@@ -1,158 +1,148 @@
-import os
+from flask import Flask, jsonify
+from flask_cors import CORS  # Importiere CORS
+import requests
+from requests.auth import HTTPBasicAuth
 import json
-import urllib3
 from datetime import datetime
-from influxdb import InfluxDBClient
-from flask import Flask, jsonify, request
-from flask_cors import CORS  # Importiere flask_cors
-
-# Warnungen bezüglich unbestätigter HTTPS-Anfragen deaktivieren (optional)
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 app = Flask(__name__)
 
-# CORS für alle Routen aktivieren
+# Aktiviere CORS für alle Routen
 CORS(app)
 
-def fetch_weather_data():
-    # Pfade zu den Dateien
-    credentials_file_path = 'credentials.txt'
-    koordinaten_file_path = 'Koordinaten.json'
+# InfluxDB connection details (for hsma-iot.de)
+INFLUXDB_URL = "https://hsma-iot.de/influxdb/query"  
+INFLUXDB_USERNAME = "hsma_faki_stud2024" 
+INFLUXDB_PASSWORD = "N8Yqotmhe1lHZZTY2l8py4Hl6BUqEl" 
+INFLUXDB_DB = "HSMA_weather_stations"
 
-    # Standardwerte für alle Attribute
-    default_values = {
-        "humidity": None,
-        "rain": None,
-        "temperature": None,
-        "timestamp": None,
-        "x": None,
-        "y": None
+# Lese die Koordinaten aus der JSON-Datei ein
+with open('Koordinaten.json') as file:
+    coordinates_data = json.load(file)
+
+# Helper function to escape strings for InfluxDB queries
+def escape_string(value):
+    return value.replace("'", "\\'").replace('"', '\\"')
+
+# Helper function to make requests to InfluxDB
+def query_influxdb(query):
+    params = {
+        "db": INFLUXDB_DB,
+        "q": query
     }
+    response = requests.get(INFLUXDB_URL, params=params, auth=HTTPBasicAuth(INFLUXDB_USERNAME, INFLUXDB_PASSWORD))
+    response.raise_for_status()  # Raises an exception if the status code is 4xx or 5xx
+    return response.json()
 
-    # Benutzername und Passwort aus der Datei lesen
-    props = {}
+# Extract locations
+def extract_locations(data):
+    locations = set()
+    if 'results' in data:
+        for result in data['results']:
+            if 'series' in result:
+                for series in result['series']:
+                    for value in series['values']:
+                        locations.add(value[1])  # Assuming the location is at index 1
+    return locations
+
+# Extract measurements
+def extract_measurements(data):
+    measurements = set()
+    if 'results' in data:
+        for result in data['results']:
+            if 'series' in result:
+                for series in result['series']:
+                    for value in series['values']:
+                        measurements.add(value[0])  # Assuming the measurement is at index 0
+    return measurements
+
+# Extract latest values for each measurement
+def extract_latest_values(data):
+    latest_values = {}
+    if 'results' in data:
+        for result in data['results']:
+            if 'series' in result:
+                for series in result['series']:
+                    measurement_name = series['name']
+                    if series['values']:
+                        latest_values[measurement_name] = series['values'][0][1]  # Assuming value is at index 1
+    return latest_values
+
+# Helper function to format the time
+def format_time(timestamp):
     try:
-        with open(credentials_file_path, 'r') as f:
-            for line in f:
-                if '=' in line:
-                    key, value = line.strip().split('=', 1)
-                    props[key.strip()] = value.strip()
-    except IOError as e:
-        return {"error": f"Fehler beim Lesen der Credentials-Datei: {e}"}, 500
-
-    USERNAME = props.get('username')
-    PASSWORD = props.get('password')
-
-    if USERNAME is None or PASSWORD is None:
-        return {"error": "Benutzername oder Passwort nicht in der Credentials-Datei gefunden."}, 500
-
-    # Koordinaten aus Koordinaten.json lesen
-    koordinaten_map = {}
-    try:
-        with open(koordinaten_file_path, 'r') as reader:
-            koordinaten_list = json.load(reader)
-            for item in koordinaten_list:
-                location = item.get('location')
-                x = float(item.get('x'))
-                y = float(item.get('y'))
-                coords = {'x': x, 'y': y}
-                koordinaten_map[location] = coords
-    except IOError as e:
-        return {"error": f"Fehler beim Lesen der Koordinaten-Datei: {e}"}, 500
-
-    # Verbindung zur InfluxDB herstellen
-    INFLUXDB_URL = 'hsma-iot.de'
-    DATABASE = 'HSMA_weather_stations'
-
-    influxdb_client = InfluxDBClient(
-        host=INFLUXDB_URL,
-        port=443,
-        username=USERNAME,
-        password=PASSWORD,
-        database=DATABASE,
-        ssl=True,
-        verify_ssl=False,
-        path='/influxdb/'
-    )
-
-    try:
-        # Abfrage definieren, um die neuesten Datenpunkte jeder Wetterstation zu erhalten
-        query_string = 'SELECT LAST(*) FROM /.*/ GROUP BY "location"'
-        result = influxdb_client.query(query_string)
-
-        # Dictionary zum Speichern der Daten
-        data_map = {}
-
-        # Verarbeitung des Abfrageergebnisses
-        for series in result.raw.get('series', []):
-            measurement = series.get('name')  # Measurement-Name
-            tags = series.get('tags', {})
-            location = tags.get('location')  # Standort
-
-            if not location:
-                continue
-
-            # Die neuesten Werte abrufen
-            columns = series.get('columns', [])
-            values = series.get('values', [[]])[0]  # Nur ein Wert pro Serie
-
-            # Daten für die aktuelle Location abrufen oder neuen Eintrag erstellen
-            measurement_data = data_map.get(location, {})
-
-            # Spaltennamen und Werte hinzufügen
-            for i in range(1, len(columns)):  # Beginne bei 1, um "time" zu überspringen
-                field = measurement
-                value = values[i]
-
-                # Speichere nur die gewünschten Felder
-                if field in ['Humidity0', 'Temperature0', 'Rain0', 'Time']:
-                    # Umbenennen der Felder für die JSON-Ausgabe
-                    json_field_name = ''
-                    if field == 'Humidity0':
-                        json_field_name = 'humidity'
-                    elif field == 'Temperature0':
-                        json_field_name = 'temperature'
-                    elif field == 'Rain0':
-                        json_field_name = 'rain'
-                    elif field == 'Time':
-                        json_field_name = 'timestamp'
-                        # Optional: Zeitstempel umwandeln
-                        if isinstance(value, (int, float)):
-                            unix_timestamp = float(value)
-                            timestamp = int(unix_timestamp * 1000)
-                            date = datetime.fromtimestamp(timestamp / 1000.0)
-                            value = date.strftime('%Y-%m-%d %H:%M:%S')
-                    measurement_data[json_field_name] = value
-
-            # Speichere die Location
-            measurement_data['location'] = location
-
-            # Koordinaten hinzufügen
-            coords = koordinaten_map.get(location)
-            if coords:
-                measurement_data['x'] = coords['x']
-                measurement_data['y'] = coords['y']
-            else:
-                print(f"Keine Koordinaten für Location: {location}")
-
-            # Aktualisiere die Daten in der data_map
-            data_map[location] = measurement_data
-
-        return list(data_map.values()), 200
+        # Prüfe, ob der Zeitstempel ein Integer (Unix-Timestamp) ist
+        if isinstance(timestamp, int):
+            # Konvertiere Unix-Timestamp zu einem lesbaren Format
+            dt = datetime.utcfromtimestamp(timestamp)  # Umwandlung in UTC-Zeit
+            return dt.strftime("%d.%m.%Y %H:%M:%S")
+        
+        # Falls es ein String ist, wird angenommen, dass es im ISO-Format vorliegt
+        elif isinstance(timestamp, str):
+            dt = datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%SZ")
+            return dt.strftime("%d.%m.%Y %H:%M:%S")
+        
+        # Falls das Format nicht passt, gib den Zeitstempel unverändert zurück
+        return timestamp
 
     except Exception as e:
-        return {"error": str(e)}, 500
+        # Fallback, falls ein unerwartetes Format vorliegt
+        return str(e)
 
-    finally:
-        # Verbindung schließen
-        influxdb_client.close()
+# Helper function to get coordinates for a location
+def get_coordinates_for_location(location):
+    for coord in coordinates_data:
+        if coord["location"] == location:
+            return coord["x"], coord["y"]
+    return None, None  # Falls keine Koordinaten vorhanden sind
 
-
-@app.route('/weather', methods=['GET'])
+# API endpoint to retrieve weather data
+@app.route('/api/data', methods=['GET'])
 def get_weather_data():
-    # Daten abrufen und als JSON zurückgeben
-    data, status_code = fetch_weather_data()
-    return jsonify(data), status_code
+    try:
+        # 1. Get all locations
+        query = "SHOW TAG VALUES WITH KEY = \"location\""
+        location_data = query_influxdb(query)
+        locations = extract_locations(location_data)
 
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=8080)
+        location_to_measurements_map = {}
+
+        # 2. For each location, get all measurements and their latest values
+        for location in locations:
+            # Get all measurements for the current location
+            measurements_query = f"SHOW MEASUREMENTS WHERE \"location\" = '{escape_string(location)}'"
+            measurements_data = query_influxdb(measurements_query)
+            measurements = extract_measurements(measurements_data)
+
+            measurements_with_values = {}
+
+            if measurements:
+                # Create query to get the latest values for all measurements for the current location
+                value_query = " ".join([f"SELECT LAST(*) FROM \"{escape_string(measurement)}\" WHERE \"location\" = '{escape_string(location)}';"
+                                        for measurement in measurements])
+                value_data = query_influxdb(value_query)
+
+                # Extract the latest values
+                measurements_with_values = extract_latest_values(value_data)
+
+            # Füge die Koordinaten zur Location hinzu
+            x, y = get_coordinates_for_location(location)
+            measurements_with_values["x"] = x
+            measurements_with_values["y"] = y
+
+            # Überprüfe, ob ein Zeitstempel vorhanden ist und formatiere ihn
+            if "Time" in measurements_with_values:
+                measurements_with_values["Time"] = format_time(measurements_with_values["Time"])
+
+            location_to_measurements_map[location] = measurements_with_values
+
+        # 3. Return the data as JSON
+        return jsonify(location_to_measurements_map)
+
+    except requests.exceptions.HTTPError as err:
+        return jsonify({"error": str(err)}), 500  # Handle HTTP errors
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500  # General error handling
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8000)
