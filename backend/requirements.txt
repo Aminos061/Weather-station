@@ -2,3 +2,4 @@ Flask==2.3.3                   # Flask-Framework für das Backend
 Flask-Cors==3.0.10             # Für Cross-Origin Resource Sharing (z.B. bei API-Aufrufen vom Frontend)
 influxdb-client==1.36.0        # InfluxDB-Client für die Anbindung an InfluxDB
 gunicorn==21.2.0               # WSGI HTTP Server für die Produktion (wichtig für Heroku)
+requests==2.31.0 

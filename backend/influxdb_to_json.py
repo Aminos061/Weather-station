@@ -146,4 +146,4 @@ def get_weather_data():
         return jsonify({"error": str(e)}), 500  # General error handling
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000)
+    app.run(host='0.0.0.0', port=5000)
