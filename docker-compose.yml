@@ -13,9 +13,11 @@ services:
       - "8080:80"
 
   backend_python:
-    build: ./backend
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
     container_name: backend_python
     expose:
-      - 5000
+      - 8000
     ports:
-      - "5000:5000"
+      - "8000:8000"
