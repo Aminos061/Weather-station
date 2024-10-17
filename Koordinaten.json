@@ -2,177 +2,211 @@
   {
     "location": "0x0000ABAE",
     "x": 8.4670,
-    "y": 49.4882
+    "y": 49.4882,
+    "Adresse": "Musterstraße 1, 69115 Heidelberg"
   },
   {
     "location": "0x0000ADCC",
     "x": 8.4671,
-    "y": 49.4883
+    "y": 49.4883,
+    "Adresse": "Musterstraße 2, 69115 Heidelberg"
   },
   {
     "location": "0x0000D8EF",
     "x": 8.4672,
-    "y": 49.4884
+    "y": 49.4884,
+    "Adresse": "Musterstraße 3, 69115 Heidelberg"
   },
   {
     "location": "0x0000EB8B",
     "x": 8.4673,
-    "y": 49.4885
+    "y": 49.4885,
+    "Adresse": "Musterstraße 4, 69115 Heidelberg"
   },
   {
     "location": "0x07665746",
     "x": 8.4674,
-    "y": 49.4886
+    "y": 49.4886,
+    "Adresse": "Musterstraße 5, 69115 Heidelberg"
   },
   {
     "location": "0x13802117",
     "x": 8.4675,
-    "y": 49.4887
+    "y": 49.4887,
+    "Adresse": "Musterstraße 6, 69115 Heidelberg"
   },
   {
     "location": "0x20915291",
     "x": 8.4676,
-    "y": 49.4888
+    "y": 49.4888,
+    "Adresse": "Musterstraße 7, 69115 Heidelberg"
   },
   {
     "location": "0x21333703",
     "x": 8.4677,
-    "y": 49.4889
+    "y": 49.4889,
+    "Adresse": "Musterstraße 8, 69115 Heidelberg"
   },
   {
     "location": "0x30330001",
     "x": 8.4678,
-    "y": 49.4890
+    "y": 49.4890,
+    "Adresse": "Musterstraße 9, 69115 Heidelberg"
   },
   {
     "location": "0x41216472",
     "x": 8.4679,
-    "y": 49.4891
+    "y": 49.4891,
+    "Adresse": "Musterstraße 10, 69115 Heidelberg"
   },
   {
     "location": "0x45877274",
     "x": 8.4680,
-    "y": 49.4892
+    "y": 49.4892,
+    "Adresse": "Musterstraße 11, 69115 Heidelberg"
   },
   {
     "location": "0x46770886",
     "x": 8.4681,
-    "y": 49.4893
+    "y": 49.4893,
+    "Adresse": "Musterstraße 12, 69115 Heidelberg"
   },
   {
     "location": "0x46988418",
     "x": 8.4682,
-    "y": 49.4894
+    "y": 49.4894,
+    "Adresse": "Musterstraße 13, 69115 Heidelberg"
   },
   {
     "location": "0x49111287",
     "x": 8.4683,
-    "y": 49.4895
+    "y": 49.4895,
+    "Adresse": "Musterstraße 14, 69115 Heidelberg"
   },
   {
     "location": "0x50010558",
     "x": 8.4684,
-    "y": 49.4896
+    "y": 49.4896,
+    "Adresse": "Musterstraße 15, 69115 Heidelberg"
   },
   {
     "location": "0x55419312",
     "x": 8.4685,
-    "y": 49.4897
+    "y": 49.4897,
+    "Adresse": "Musterstraße 16, 69115 Heidelberg"
   },
   {
     "location": "0x57134932",
     "x": 8.4686,
-    "y": 49.4898
+    "y": 49.4898,
+    "Adresse": "Musterstraße 17, 69115 Heidelberg"
   },
   {
     "location": "0x65520980",
     "x": 8.4687,
-    "y": 49.4899
+    "y": 49.4899,
+    "Adresse": "Musterstraße 18, 69115 Heidelberg"
   },
   {
     "location": "0x65766422",
     "x": 8.4688,
-    "y": 49.4900
+    "y": 49.4900,
+    "Adresse": "Musterstraße 19, 69115 Heidelberg"
   },
   {
     "location": "0x75500839",
     "x": 8.4689,
-    "y": 49.4901
+    "y": 49.4901,
+    "Adresse": "Musterstraße 20, 69115 Heidelberg"
   },
   {
     "location": "0x76846001",
     "x": 8.4690,
-    "y": 49.4902
+    "y": 49.4902,
+    "Adresse": "Musterstraße 21, 69115 Heidelberg"
   },
   {
     "location": "0x83362882",
     "x": 8.4691,
-    "y": 49.4903
+    "y": 49.4903,
+    "Adresse": "Musterstraße 22, 69115 Heidelberg"
   },
   {
     "location": "0x92693849",
     "x": 8.4692,
-    "y": 49.4904
+    "y": 49.4904,
+    "Adresse": "Musterstraße 23, 69115 Heidelberg"
   },
   {
     "location": "0x99609065",
     "x": 8.4693,
-    "y": 49.4905
+    "y": 49.4905,
+    "Adresse": "Musterstraße 24, 69115 Heidelberg"
   },
   {
     "location": "0x9F73428E",
     "x": 8.4694,
-    "y": 49.4906
+    "y": 49.4906,
+    "Adresse": "Musterstraße 25, 69115 Heidelberg"
   },
   {
     "location": "Balkon",
     "x": 8.4695,
-    "y": 49.4907
+    "y": 49.4907,
+    "Adresse": "Musterstraße 26, 69115 Heidelberg"
   },
   {
     "location": "BalkonV3",
     "x": 8.4696,
-    "y": 49.4908
+    "y": 49.4908,
+    "Adresse": "Musterstraße 27, 69115 Heidelberg"
   },
   {
     "location": "HBN01",
     "x": 8.4697,
-    "y": 49.4909
+    "y": 49.4909,
+    "Adresse": "Musterstraße 28, 69115 Heidelberg"
   },
   {
     "location": "HBN03",
     "x": 8.4698,
-    "y": 49.4910
+    "y": 49.4910,
+    "Adresse": "Musterstraße 29, 69115 Heidelberg"
   },
   {
     "location": "HBN04",
     "x": 8.4699,
-    "y": 49.4911
+    "y": 49.4911,
+    "Adresse": "Musterstraße 30, 69115 Heidelberg"
   },
   {
     "location": "0x5B2298",
     "x": 8.4700,
-    "y": 49.4912
+    "y": 49.4912,
+    "Adresse": "Musterstraße 31, 69115 Heidelberg"
   },
   {
     "location": "0x67E5E8",
     "x": 8.4701,
-    "y": 49.4913
+    "y": 49.4913,
+    "Adresse": "Musterstraße 32, 69115 Heidelberg"
   },
   {
     "location": "eui-2cf7f12043308981",
     "x": 8.4702,
-    "y": 49.4914
+    "y": 49.4914,
+    "Adresse": "Musterstraße 33, 69115 Heidelberg"
   },
   {
     "location": "eui-2cf7f12050200f88",
     "x": 8.4703,
-    "y": 49.4915
+    "y": 49.4915,
+    "Adresse": "Musterstraße 34, 69115 Heidelberg"
   },
   {
     "location": "eui-2cf7f120502089eb",
     "x": 8.4704,
-    "y": 49.4916
+    "y": 49.4916,
+    "Adresse": "Musterstraße 35, 69115 Heidelberg"
   }
 ]
-

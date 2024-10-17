@@ -89,12 +89,12 @@ def format_time(timestamp):
         # Fallback, falls ein unerwartetes Format vorliegt
         return str(e)
 
-# Helper function to get coordinates for a location
-def get_coordinates_for_location(location):
+# Helper function to get coordinates and address for a location
+def get_coordinates_and_address_for_location(location):
     for coord in coordinates_data:
         if coord["location"] == location:
-            return coord["x"], coord["y"]
-    return None, None  # Falls keine Koordinaten vorhanden sind
+            return coord["x"], coord["y"], coord.get("Adresse", None)  # Füge Adresse hinzu (falls vorhanden)
+    return None, None, None  # Falls keine Koordinaten oder Adresse vorhanden sind
 
 # API endpoint to retrieve weather data
 @app.route('/api/data', methods=['GET'])
@@ -125,10 +125,11 @@ def get_weather_data():
                 # Extract the latest values
                 measurements_with_values = extract_latest_values(value_data)
 
-            # Füge die Koordinaten zur Location hinzu
-            x, y = get_coordinates_for_location(location)
+            # Füge die Koordinaten und Adresse zur Location hinzu
+            x, y, adresse = get_coordinates_and_address_for_location(location)
             measurements_with_values["x"] = x
             measurements_with_values["y"] = y
+            measurements_with_values["Adresse"] = adresse
 
             # Überprüfe, ob ein Zeitstempel vorhanden ist und formatiere ihn
             if "Time" in measurements_with_values:
