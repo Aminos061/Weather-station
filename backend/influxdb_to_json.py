@@ -4,6 +4,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 import json
 from datetime import datetime
+import os
 
 app = Flask(__name__)
 
@@ -11,10 +12,10 @@ app = Flask(__name__)
 CORS(app)
 
 # InfluxDB connection details (for hsma-iot.de)
-INFLUXDB_URL = "https://hsma-iot.de/influxdb/query"  
-INFLUXDB_USERNAME = "hsma_faki_stud2024" 
-INFLUXDB_PASSWORD = "N8Yqotmhe1lHZZTY2l8py4Hl6BUqEl" 
-INFLUXDB_DB = "HSMA_weather_stations"
+INFLUXDB_URL = os.getenv('INFLUXDB_URL')
+INFLUXDB_USERNAME = os.getenv('INFLUXDB_USERNAME')
+INFLUXDB_PASSWORD = os.getenv('INFLUXDB_PASSWORD')
+INFLUXDB_DB = os.getenv('INFLUXDB_DB')
 
 # Lese die Koordinaten aus der JSON-Datei ein
 with open('Koordinaten.json') as file:
