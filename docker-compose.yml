@@ -1,4 +1,3 @@
-version: "3.9"
 services:
   frontend_flutter:
     build: ./frontend_flutter
@@ -17,6 +16,8 @@ services:
       context: .
       dockerfile: Dockerfile.backend
     container_name: backend_python
+    env_file:
+      - ./environments/backend.env
     expose:
       - 8000
     ports:
